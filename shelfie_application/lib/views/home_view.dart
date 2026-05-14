@@ -1,4 +1,6 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import '../services/firebase_service.dart';
 import '../widgets/book_list.dart';
 import '../models/book.dart';
 import 'scan_view.dart';
@@ -92,6 +94,8 @@ class _HomeViewState extends State<HomeView>{
       final book = await ApiService.fetchBookByIsbn(isbn);
       if(book != null){
         await DatabaseHelper.instance.create(book);
+
+        await FirebaseService().syncBookToCloud(book);
         _refreshData();
       }
     }
