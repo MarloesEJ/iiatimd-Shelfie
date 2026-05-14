@@ -3,7 +3,14 @@ import '../services/database_helper.dart';
 import '../models/book.dart';
 
 class BookList extends StatelessWidget{
-  const BookList({super.key});
+  final Function(Book) onBookSelected;
+  final VoidCallback onRefresh;
+
+  const BookList({
+    super.key,
+    required this.onBookSelected,
+    required this.onRefresh
+  });
 
   @override
   Widget build(BuildContext context){
@@ -34,6 +41,7 @@ class BookList extends StatelessWidget{
                 icon: const Icon(Icons.delete, color: Colors.red),
                 onPressed: () async {
                   await DatabaseHelper.instance.delete(book.id);
+                  onRefresh();
                 }
               ),
             );
