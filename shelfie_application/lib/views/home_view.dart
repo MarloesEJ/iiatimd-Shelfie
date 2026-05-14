@@ -95,7 +95,7 @@ class _HomeViewState extends State<HomeView>{
       if(book != null){
         await DatabaseHelper.instance.create(book);
 
-        await FirebaseService().syncBookToCloud(book);
+        // await FirebaseService().syncBookToCloud(book);
         _refreshData();
       }
     }
