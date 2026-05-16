@@ -4,9 +4,10 @@ import '../models/book.dart';
 
 class ApiService{
   static const String _baseUrl = 'https://www.googleapis.com/books/v1/volumes';
+  static const String _apiKey = 'AIzaSyCbqJkT4StjGkVUUNlvkNVukhWYkUCD-bg';
 
   static Future<Book?> fetchBookByIsbn(String isbn) async{
-    final url = Uri.parse('$_baseUrl?q=isbn:$isbn');
+    final url = Uri.parse('$_baseUrl?q=isbn:$isbn&key=$_apiKey');
 
     try{
       final response = await http.get(url);
@@ -25,26 +26,43 @@ class ApiService{
   }
   
   static Future<List<Book>> searchBooks(String query) async{
+    print('ApiService: Start zoeken naar "$query"...');
+
     if (query.isEmpty) return [];
 
-    final url = Uri.parse('$_baseUrl?q=${Uri.encodeComponent(query)}&maxResults=10');
 
-    try{
-      final response = await http.get(url);
+    final url = Uri.parse('$_baseUrl?q=${Uri.encodeComponent(query)}&maxResults=10&key=$_apiKey');
+    print('ApiService: URL opgebouwd -> $url');
+
+    try {
+      print('ApiService: HTTP GET verzoek wordt verstuurd');
+
+      final response = await http.get(url).timeout(const Duration(
+          seconds: 5)); //timeout toegevoegd, zodat dit niet voor eeuwig duurt en door catch gevangen kan worden
+
+      print('ApiService: Statuscode ontvangen -> ${response.statusCode}');
+
       if (response.statusCode != 200) return [];
 
       final data = jsonDecode(response.body);
-      if (data['totalItems'] == 0 || data['items'] == null) return [];
+      if (data['totalItems'] == 0 || data['items'] == null) {
+        print('ApiService: 0 resultaten teruggekregen van de API link');
+        return [];
+      }
 
       final List items = data['items'];
       List<Book> books = [];
 
-      for (var item in items){
+      for (var item in items) {
         final volumeInfo = item['volumeInfo'];
-        final String id = item['id'] ?? DateTime.now().millisecondsSinceEpoch.toString();
+        final String id = item['id'] ?? DateTime
+            .now()
+            .millisecondsSinceEpoch
+            .toString();
 
         books.add(_mapToBook(volumeInfo, id));
       }
+      print('ApiService: ${books.length} boeken gevonden');
       return books;
     }
 

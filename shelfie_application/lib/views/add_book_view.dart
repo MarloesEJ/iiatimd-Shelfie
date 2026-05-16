@@ -16,6 +16,7 @@ class _AddBookViewState extends State<AddBookView>{
   final TextEditingController _searchController = TextEditingController();
 
   void _searchBooks(String query) async{
+    if (query.trim().isEmpty) return;
     final results = await ApiService.searchBooks(query);
     setState(() => _searchResults = results);
   }
