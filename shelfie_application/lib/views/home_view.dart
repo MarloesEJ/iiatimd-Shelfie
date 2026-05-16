@@ -4,6 +4,7 @@ import '../services/firebase_service.dart';
 import '../widgets/book_list.dart';
 import '../models/book.dart';
 import 'scan_view.dart';
+import 'add_book_view.dart';
 import '../services/api_service.dart';
 import '../services/database_helper.dart';
 
@@ -43,10 +44,9 @@ class _HomeViewState extends State<HomeView>{
           }
         },
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _handleScan(context),
-        label: const Text('Scan Book'),
-        icon: const Icon(Icons.add),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add),
+        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const AddBookView()))
       ),
     );
   }
