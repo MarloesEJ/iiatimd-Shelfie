@@ -109,7 +109,6 @@ class _AddBookViewState extends State<AddBookView>{
                         builder: (context) => BookDetailView(book: book, isPreview: true),
                       ),
                     ).then((_){
-                      _resetToScanner();
                     });
                   },
                 );

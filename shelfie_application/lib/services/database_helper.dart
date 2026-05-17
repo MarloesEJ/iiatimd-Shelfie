@@ -20,8 +20,13 @@ class DatabaseHelper{
 
     return await openDatabase(
       path,
-      version: 1,
-      onCreate: _createDB
+      version: 2,
+      onCreate: _createDB,
+
+      onUpgrade: (db, oldVersion, newVersion) async{
+        await db.execute('DROP TABLE IF EXISTS books');
+        await _createDB(db, newVersion);
+      }
     );
   }
 
@@ -32,7 +37,7 @@ class DatabaseHelper{
         title TEXT,
         author TEXT,
         isbn TEXT,
-        thumbnailUrl TEXT
+        thumbnailUrl TEXT,
         description TEXT,
         createdAt TEXT NOT NULL
       )
@@ -42,7 +47,7 @@ class DatabaseHelper{
   //boek toevoegen
   Future<int> create(Book book) async{
     final db = await instance.database;
-    return await db.insert('book', book.toMap(),
+    return await db.insert('books', book.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace);
   }
 

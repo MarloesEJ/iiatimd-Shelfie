@@ -44,9 +44,42 @@ class BookDetailView extends StatelessWidget{
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                   onPressed: () async{
-                    await DatabaseHelper.instance.create(book);
-                    if(!context.mounted) return;
-                    Navigator.pop(context);
+                    try{
+                      print('BOOK_DETAIL: Start opslaan van boek: ${book.title}');
+
+                      await DatabaseHelper.instance.create(book);
+                      // await FirebaseService().saveBookToCloud(book);
+
+                      print('BOOK_DETAIL: Opslaan gelukt!');
+
+                      if(!context.mounted) return;
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('"${book.title}" is succesvol toegevoegd!'),
+                          backgroundColor: Colors.lightGreen.withValues(alpha: 0.5),
+                          duration: const Duration(seconds: 2),
+                        ),
+                      );
+                    }
+                    catch(e, stacktrace){
+                      print('BOOK_DETAIL ERROR: $e');
+                      print('STACKTRACE: $stacktrace');
+
+                      if(!context.mounted) return;
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Fout bij toevoegen: $e'),
+                          backgroundColor: Colors.red.withValues(alpha: 0.5),
+                          duration: const Duration(seconds: 3),
+                        ),
+                      );
+                    }
+                    finally {
+                      print('BOOK_DETAIL: Sluiten van preview scherm');
+                      Navigator.pop(context);
+                    }
                   },
                   child: const Text('Toevoegen aan bibliotheek', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 )

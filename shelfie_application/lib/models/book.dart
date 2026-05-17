@@ -33,6 +33,7 @@ class Book {
   //Book object om zetten naar een map voor opslag
   Map<String, dynamic> toMap(){
     return{
+      'id': id,
       'title': title,
       'author': author,
       'isbn' : isbn,
