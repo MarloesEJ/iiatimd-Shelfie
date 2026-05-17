@@ -30,8 +30,16 @@ class ApiService{
 
     if (query.isEmpty) return [];
 
+    // verwijder spaties en streepjes voor een schonere invoer.
+    String cleanQuery = query.replaceAll(RegExp(r'[\s-]'), '');
 
-    final url = Uri.parse('$_baseUrl?q=${Uri.encodeComponent(query)}&maxResults=10&key=$_apiKey');
+    //controleerd op de invoer puur uit 10 of 13 cijfers bestaat, voor een ISBN
+    bool isIsbn = RegExp(r'^\d{10}$|^\d{13}$').hasMatch(cleanQuery);
+
+    String finalQuery = isIsbn ? 'isbn:$cleanQuery' : Uri.encodeComponent(query);
+
+
+    final url = Uri.parse('$_baseUrl?q=$finalQuery&maxResults=10&key=$_apiKey');
     print('ApiService: URL opgebouwd -> $url');
 
     try {
