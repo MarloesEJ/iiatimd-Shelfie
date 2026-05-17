@@ -17,6 +17,9 @@ class HomeView extends StatefulWidget{
 class _HomeViewState extends State<HomeView>{
   Book? _selectedBook;
 
+  String _searchQuery = '';
+  final TextEditingController _searchController = TextEditingController();
+
   void _refreshData() {
     setState(() {});
   }
@@ -27,23 +30,63 @@ class _HomeViewState extends State<HomeView>{
       appBar: AppBar(
         title: const Text('My Shelfie', style: TextStyle(fontWeight: FontWeight.bold)),
         elevation: 2,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(60),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: 'Zoek tussen je boeken...',
+                prefixIcon: const Icon(Icons.search),
+                suffixIcon: _searchQuery.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                        _searchController.clear();
+                        setState(() => _searchQuery = '');
+                      },
+                    )
+                  : null,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                filled: true,
+                fillColor: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                contentPadding: EdgeInsets.zero,
+              ),
+              onChanged: (value){
+                setState((){
+                  _searchQuery = value.toLowerCase();
+                });
+              },
+            ),
+          )
+        )
       ),
+
       body: LayoutBuilder(
-        builder: (context, constraints) {
+        builder: (Context, constraints){
           if(constraints.maxWidth > 600){
             return _buildTabletLayout();
-          } else{
+          }
+          else{
             return _buildMobileLayout();
           }
         },
       ),
+
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () async{
+
           // wacht to terug is van AddBookView
           await Navigator.push(
             context, 
-            MaterialPageRoute(builder: (context) => const AddBookView()));
+            MaterialPageRoute(builder: (context) => const AddBookView())
+            );
+
             // refreshed wanneer addBookview gesloten is, zodat nieuwe toegevoegde boeken te zien zijn.
             _refreshData();
         },
@@ -56,6 +99,7 @@ class _HomeViewState extends State<HomeView>{
 
   Widget _buildMobileLayout(){
     return BookList(
+      searchQuery: _searchQuery,
       onBookSelected: (book) {
         Navigator.push(
           context,
@@ -74,40 +118,37 @@ class _HomeViewState extends State<HomeView>{
         SizedBox(
           width: 350,
           child: BookList(
+            searchQuery: _searchQuery,
             onBookSelected: (book) => setState(()=> _selectedBook = book),
-            onRefresh: _refreshData,
+            onRefresh: (){
+              _refreshData;
+              setState(() => _selectedBook = null);
+            }, 
           ),
         ),
-        const VerticalDivider(width: 1),
+
+        const VerticalDivider(width: 1, thickness: 1),
+
         Expanded(
           child: _selectedBook == null
           ? const Center(child: Text('Selecteer een boek om details te zien'))
-          : _BookDetailPane(book: _selectedBook!),
+          : KeyedSubtree(
+              key: ValueKey(_selectedBook!.id),
+              child: _BookDetailPane(book: _selectedBook!, isPreview: false),
+            ),
         ),
       ],
     );
   }
 
 
-  //Logica
-
-
-  void _showBookDetails(Book book){
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context)=> DraggableScrollableSheet(
-        initialChildSize: 0.6,
-        builder: (context, scrollController) => _BookDetailPane(book: book),
-      ),
-    );
-  }
-
 }
 
 class _BookDetailPane extends StatelessWidget{
   final Book book;
-  const _BookDetailPane({required this.book});
+  final bool? isPreview;
+
+  const _BookDetailPane({required this.book, this.isPreview});
 
   @override
   Widget build(BuildContext context){
