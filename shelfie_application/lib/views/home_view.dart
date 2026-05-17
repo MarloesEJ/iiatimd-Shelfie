@@ -1,6 +1,6 @@
-import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import '../services/firebase_service.dart';
+// import '../services/firebase_service.dart';
 import '../widgets/book_list.dart';
 import '../models/book.dart';
 import 'scan_view.dart';
