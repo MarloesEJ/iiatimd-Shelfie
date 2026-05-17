@@ -46,7 +46,14 @@ class _HomeViewState extends State<HomeView>{
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
-        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const AddBookView()))
+        onPressed: () async{
+          // wacht to terug is van AddBookView
+          await Navigator.push(
+            context, 
+            MaterialPageRoute(builder: (context) => const AddBookView()));
+            // refreshed wanneer addBookview gesloten is, zodat nieuwe toegevoegde boeken te zien zijn.
+            _refreshData();
+        },
       ),
     );
   }
