@@ -131,10 +131,19 @@ class _HomeViewState extends State<HomeView>{
 
         Expanded(
           child: _selectedBook == null
-          ? const Center(child: Text('Selecteer een boek om details te zien'))
+          ? const Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.book_outlined, size: 64, color: Colors.grey),
+                SizedBox(height: 16),
+                Text('Selecteer een boek uit je bibliotheek', style: TextStyle(fontSize: 16, color: Colors.grey))
+              ],
+            ),
+          )
           : KeyedSubtree(
               key: ValueKey(_selectedBook!.id),
-              child: _BookDetailPane(book: _selectedBook!, isPreview: false),
+              child: BookDetailView(book: _selectedBook!, isPreview: false),
             ),
         ),
       ],
@@ -144,34 +153,3 @@ class _HomeViewState extends State<HomeView>{
 
 }
 
-class _BookDetailPane extends StatelessWidget{
-  final Book book;
-  final bool? isPreview;
-
-  const _BookDetailPane({required this.book, this.isPreview});
-
-  @override
-  Widget build(BuildContext context){
-    return Padding(
-      padding: const EdgeInsets.all(20.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (book.thumbnailUrl != null)
-            Center(child: Image.network(book.thumbnailUrl!, height: 200)),
-          const SizedBox(height: 20),
-          Text(book.title, style: Theme.of(context).textTheme.headlineSmall),
-          Text(book.author, style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.grey)),
-          const Divider(height: 30),
-          Text('Beschrijving:', style: Theme.of(context).textTheme.titleSmall),
-          const Divider(height: 10),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Text(book.description)
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
