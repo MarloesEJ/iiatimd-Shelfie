@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../widgets/book_list.dart';
 import '../models/book.dart';
 import 'add_book_view.dart';
+import 'book_detail_view.dart';
 
 
 class HomeView extends StatefulWidget{
@@ -55,7 +56,14 @@ class _HomeViewState extends State<HomeView>{
 
   Widget _buildMobileLayout(){
     return BookList(
-      onBookSelected: (book) => _showBookDetails(book),
+      onBookSelected: (book) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => BookDetailView(book: book, isPreview: false),
+          ),
+        ).then((_) => _refreshData());
+      },
       onRefresh: _refreshData,
     );
   }

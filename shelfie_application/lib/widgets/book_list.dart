@@ -37,13 +37,6 @@ class BookList extends StatelessWidget{
                   : const Icon(Icons.book),
               title: Text(book.title),
               subtitle: Text(book.author),
-              trailing: IconButton(
-                icon: const Icon(Icons.delete, color: Colors.red),
-                onPressed: () async {
-                  await DatabaseHelper.instance.delete(book.id);
-                  onRefresh();
-                }
-              ),
             );
           },
         );
