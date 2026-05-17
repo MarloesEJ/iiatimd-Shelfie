@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 // import '../services/firebase_service.dart';
 import '../widgets/book_list.dart';
 import '../models/book.dart';
-import 'scan_view.dart';
 import 'add_book_view.dart';
-import '../services/api_service.dart';
-import '../services/database_helper.dart';
+
 
 class HomeView extends StatefulWidget{
   const HomeView({super.key});
@@ -28,12 +26,6 @@ class _HomeViewState extends State<HomeView>{
       appBar: AppBar(
         title: const Text('My Shelfie', style: TextStyle(fontWeight: FontWeight.bold)),
         elevation: 2,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.qr_code_scanner),
-            onPressed: () => _handleScan(context),
-          ),
-        ],
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
@@ -91,22 +83,6 @@ class _HomeViewState extends State<HomeView>{
 
   //Logica
 
-  Future<void> _handleScan(BuildContext context) async{
-    final String? isbn = await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context)=> const ScanView()),
-    );
-
-    if(isbn != null){
-      final book = await ApiService.fetchBookByIsbn(isbn);
-      if(book != null){
-        await DatabaseHelper.instance.create(book);
-
-        // await FirebaseService().syncBookToCloud(book);
-        _refreshData();
-      }
-    }
-  }
 
   void _showBookDetails(Book book){
     showModalBottomSheet(
