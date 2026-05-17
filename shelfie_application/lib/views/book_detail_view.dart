@@ -67,7 +67,10 @@ class _BookDetailViewState extends State<BookDetailView>{
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Boek is verwijderd'), backgroundColor: Colors.amber),
                   );
-                  Navigator.pop(context);
+                  if (widget.isPreview == false && Navigator.canPop(context)){
+                    Navigator.pop(context);
+                  }
+                  else{}
                 }
               },
             ),
